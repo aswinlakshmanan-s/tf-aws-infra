@@ -5,15 +5,15 @@ data "aws_availability_zones" "available" {
 locals {
 
   public_subnets_cidrs = [
-    cidrsubnet(var.vpc_cidr, 4, 0),
-    cidrsubnet(var.vpc_cidr, 4, 1),
-    cidrsubnet(var.vpc_cidr, 4, 2)
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 0),
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 1),
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 2)
   ]
 
   private_subnets_cidrs = [
-    cidrsubnet(var.vpc_cidr, 4, 3),
-    cidrsubnet(var.vpc_cidr, 4, 4),
-    cidrsubnet(var.vpc_cidr, 4, 5)
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 3),
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 4),
+    cidrsubnet(var.vpc_cidr, var.vpc_subnet_mask, 5)
   ]
 }
 

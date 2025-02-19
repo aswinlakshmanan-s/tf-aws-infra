@@ -15,4 +15,14 @@ variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   default     = "10.0.0.0/16"
 }
+variable "profile" {
+  description = "choose AWS Profile"
+  type        = string
+  default     = "dev"
+}
 
+variable "vpc_subnet_mask" {
+  description = "subnet mask for accomodating all subnet types"
+  type        = number
+  default     = 4
+}
