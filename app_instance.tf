@@ -1,3 +1,7 @@
+
+
+
+
 # Application Security Group for the web application
 resource "aws_security_group" "app_sg" {
   name        = "application-sg"
@@ -5,7 +9,7 @@ resource "aws_security_group" "app_sg" {
   vpc_id      = aws_vpc.main_vpc.id
 
   ingress {
-    description = "Allow SSH"
+    description = "Allow SSH (admin use only)"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -29,12 +33,14 @@ resource "aws_security_group" "app_sg" {
   }
 
   ingress {
-    description = "Allow Application Port"
+    description = "Allow Web Application Port"
     from_port   = var.app_port
     to_port     = var.app_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # No ingress rule for database ports (e.g., 3306 or 5432) to keep them isolated
 
   egress {
     description = "Allow all outbound traffic"
