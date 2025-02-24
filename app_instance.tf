@@ -1,13 +1,6 @@
-variable "app_port" {
-  description = "Port on which the web application listens"
-  type        = number
-  default     = 4000
-}
 
-variable "custom_ami" {
-  description = "Custom AMI with pre-installed dependencies and without git"
-  type        = string
-}
+
+
 
 # Application Security Group for the web application
 resource "aws_security_group" "app_sg" {
