@@ -1,28 +1,40 @@
 variable "aws_region" {
-  type        = string
   description = "AWS region to deploy resources"
-  default     = "us-east-1"
+  type        = string
+  default     = "us-east-2"
 }
 
 variable "vpc_name" {
-  type        = string
   description = "Name for the VPC"
+  type        = string
   default     = "main-vpc"
 }
 
 variable "vpc_cidr" {
-  type        = string
   description = "CIDR block for the VPC"
+  type        = string
   default     = "10.0.0.0/16"
 }
+
 variable "profile" {
-  description = "choose AWS Profile"
+  description = "AWS profile to use"
   type        = string
   default     = "dev"
 }
 
 variable "vpc_subnet_mask" {
-  description = "subnet mask for accomodating all subnet types"
+  description = "Subnet mask for the VPC subnets"
   type        = number
   default     = 4
+}
+
+variable "custom_ami" {
+  description = "The custom AMI ID built via Packer"
+  type        = string
+}
+
+variable "app_port" {
+  description = "Port on which the application listens"
+  type        = number
+  default     = 3000
 }
