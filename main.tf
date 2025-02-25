@@ -36,7 +36,7 @@ resource "aws_internet_gateway" "main_igw" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count                   = length(local.public_subnets_cidrs)
+  count                   =     length(local.public_subnets_cidrs)
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = local.public_subnets_cidrs[count.index]
   availability_zone       = data.aws_availability_zones.available.names[count.index]
