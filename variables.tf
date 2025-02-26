@@ -38,3 +38,80 @@ variable "app_port" {
   type        = number
   default     = 8000
 }
+
+variable "app_sg_name" {
+  description = "Name of the security group for the application"
+  type        = string
+  default     = "application-sg"
+}
+
+variable "app_sg_description" {
+  description = "Description for the security group"
+  type        = string
+  default     = "Security group for EC2 instances hosting web applications"
+}
+
+variable "ssh_port" {
+  description = "SSH port for admin access"
+  type        = number
+  default     = 22
+}
+
+variable "http_port" {
+  description = "HTTP port"
+  type        = number
+  default     = 80
+}
+
+variable "https_port" {
+  description = "HTTPS port"
+  type        = number
+  default     = 443
+}
+
+variable "allowed_cidr" {
+  description = "CIDR blocks allowed for ingress traffic"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "associate_public_ip_address" {
+  description = "Associate a public IP address with the instance"
+  type        = bool
+  default     = true
+}
+
+variable "disable_api_termination" {
+  description = "Disable API termination for the instance"
+  type        = bool
+  default     = false
+}
+
+variable "root_volume_size" {
+  description = "Size of the root volume (in GB)"
+  type        = number
+  default     = 25
+}
+
+variable "root_volume_type" {
+  description = "Type of the root volume"
+  type        = string
+  default     = "gp2"
+}
+
+variable "instance_name" {
+  description = "Name tag for the EC2 instance"
+  type        = string
+  default     = "webapp-instance"
+}
+
+variable "custom_ami" {
+  description = "Custom AMI to use for the instance"
+  type        = string
+}
