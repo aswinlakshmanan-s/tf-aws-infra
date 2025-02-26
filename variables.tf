@@ -36,5 +36,5 @@ variable "custom_ami" {
 variable "app_port" {
   description = "Port on which the web application listens"
   type        = number
-  default     = 4000
+  default     = 8000
 }
