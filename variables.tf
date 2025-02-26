@@ -111,7 +111,3 @@ variable "instance_name" {
   default     = "webapp-instance"
 }
 
-variable "custom_ami" {
-  description = "Custom AMI to use for the instance"
-  type        = string
-}
