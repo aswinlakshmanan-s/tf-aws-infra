@@ -31,12 +31,13 @@ variable "vpc_subnet_mask" {
 variable "custom_ami" {
   description = "The custom AMI ID built via Packer"
   type        = string
+  default     = "ami-0e39e9071fd40589a" # Replace with your AMI ID
 }
 
 variable "app_port" {
   description = "Port on which the web application listens"
   type        = number
-  default     = 8000
+  default     = 8080
 }
 
 variable "app_sg_name" {
@@ -109,4 +110,65 @@ variable "instance_name" {
   description = "Name tag for the EC2 instance"
   type        = string
   default     = "webapp-instance"
+}
+
+variable "security_group_id" {
+  description = "Security group ID for the EC2 instance"
+  type        = string
+  default     = "" # Will be dynamically assigned
+}
+
+variable "db_security_group_id" {
+  description = "Security group ID for the RDS instance"
+  type        = string
+  default     = "" # Will be dynamically assigned
+}
+
+variable "database_password" {
+  description = "Password for the PostgreSQL database"
+  type        = string
+  sensitive   = true
+  default     = "" # Will be dynamically generated
+}
+
+variable "s3_bucket_id" {
+  description = "S3 bucket ID for storing profile pictures"
+  type        = string
+  default     = "" # Will be dynamically generated
+}
+
+variable "rds_endpoint" {
+  description = "Endpoint for the RDS instance"
+  type        = string
+  default     = "" # Will be dynamically assigned
+}
+
+variable "public_subnets" {
+  description = "List of public subnet IDs"
+  type        = list(string)
+  default     = [] # Will be dynamically assigned
+}
+
+variable "private_subnets" {
+  description = "List of private subnet IDs"
+  type        = list(string)
+  default     = [] # Will be dynamically assigned
+}
+
+variable "load_balancer_sg_id" {
+  description = "Security group ID for the load balancer"
+  type        = string
+  default     = "" # Will be dynamically assigned
+}
+
+variable "vpc_id" {
+  description = "VPC ID to create subnets in"
+  type        = string
+  default     = "" # Will be dynamically assigned
+}
+
+variable "admin_cidr_blocks" {
+  description = "CIDR blocks allowed for SSH access"
+  type        = list(string)
+  default     = ["0.0.0.0/0"] # Replace with your office IP or bastion host IP
 }
