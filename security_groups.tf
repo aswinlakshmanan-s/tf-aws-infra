@@ -56,8 +56,8 @@ resource "aws_security_group" "db_sg" {
   # Allow inbound traffic on the database port (e.g., 5432 for PostgreSQL or 3306 for MySQL/MariaDB)
   ingress {
     description     = "Allow database traffic from the application security group"
-    from_port       = 5432 # Change to 3306 for MySQL/MariaDB
-    to_port         = 5432 # Change to 3306 for MySQL/MariaDB
+    from_port       = 5432
+    to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.app_sg.id] # Allow traffic only from the application security group
   }

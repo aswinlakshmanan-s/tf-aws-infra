@@ -6,9 +6,9 @@ resource "random_password" "db_password" {
 
 # RDS Parameter Group
 resource "aws_db_parameter_group" "db_parameter_group" {
-  name        = "csye6225-db-parameter-group"
-  family      = "postgres12" # Use "mysql5.7" for MySQL or "mariadb10.5" for MariaDB
-  description = "Custom parameter group for csye6225"
+  name        = var.db_parameter_group_name
+  family      = var.db_family
+  description = var.db_parameter_group_description
 
   parameter {
     name  = "rds.force_ssl"
@@ -16,38 +16,39 @@ resource "aws_db_parameter_group" "db_parameter_group" {
   }
 
   tags = {
-    Name        = "csye6225-db-parameter-group"
-    Environment = "Production"
+    Name        = var.db_parameter_group_name
+    Environment = var.environment
   }
 }
 
 # RDS Subnet Group
 resource "aws_db_subnet_group" "private_subnets" {
-  name        = "rds-private-subnet-group"
-  description = "Private subnet group for RDS"
+  name        = var.db_subnet_group_name
+  description = var.db_subnet_group_description
   subnet_ids  = aws_subnet.private_subnets[*].id
 
   tags = {
-    Name = "Private Subnets for RDS"
+    Name = var.db_subnet_group_name
   }
 }
 
 # RDS Instance
 resource "aws_db_instance" "csye6225_rds" {
-  allocated_storage      = 20
-  engine                 = "postgres"    # Use "mysql" for MySQL or "mariadb" for MariaDB
-  engine_version         = "12"          # Use "5.7" for MySQL or "10.5" for MariaDB
-  instance_class         = "db.t3.micro" # Cheapest instance class
-  identifier             = "csye6225"
-  username               = "csye6225"
+  allocated_storage      = var.db_allocated_storage
+  engine                 = var.db_engine
+  engine_version         = var.db_engine_version
+  instance_class         = var.db_instance_class
+  identifier             = var.db_identifier
+  username               = var.db_username
   password               = random_password.db_password.result
   parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
   db_subnet_group_name   = aws_db_subnet_group.private_subnets.name
   vpc_security_group_ids = [aws_security_group.db_sg.id]
-  publicly_accessible    = false
-  skip_final_snapshot    = true
+  publicly_accessible    = var.db_publicly_accessible
+  skip_final_snapshot    = var.db_skip_final_snapshot
+  multi_az               = var.db_multi_az
 
   tags = {
-    Name = "csye6225-db-instance"
+    Name = var.db_identifier
   }
 }

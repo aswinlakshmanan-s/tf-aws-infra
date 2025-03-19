@@ -172,3 +172,204 @@ variable "admin_cidr_blocks" {
   type        = list(string)
   default     = ["0.0.0.0/0"] # Replace with your office IP or bastion host IP
 }
+
+# Database Parameter Group
+variable "db_parameter_group_name" {
+  description = "Name for the RDS parameter group"
+  type        = string
+  default     = "csye6225-db-parameter-group"
+}
+
+variable "db_family" {
+  description = "Database engine family (PostgreSQL, MySQL, or MariaDB)"
+  type        = string
+  default     = "postgres12"
+}
+
+variable "db_parameter_group_description" {
+  description = "Description for the RDS parameter group"
+  type        = string
+  default     = "Custom parameter group for csye6225"
+}
+
+# Database Subnet Group
+variable "db_subnet_group_name" {
+  description = "Name for the RDS subnet group"
+  type        = string
+  default     = "rds-private-subnet-group"
+}
+
+variable "db_subnet_group_description" {
+  description = "Description for the RDS subnet group"
+  type        = string
+  default     = "Private subnet group for RDS"
+}
+
+# RDS Instance
+variable "db_allocated_storage" {
+  description = "Allocated storage for the RDS instance (in GB)"
+  type        = number
+  default     = 20
+}
+
+variable "db_engine" {
+  description = "Database engine (postgres, mysql, mariadb)"
+  type        = string
+  default     = "postgres"
+}
+
+variable "db_engine_version" {
+  description = "Database engine version"
+  type        = string
+  default     = "12"
+}
+
+variable "db_instance_class" {
+  description = "Instance class for the RDS instance"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "db_identifier" {
+  description = "Identifier for the RDS instance"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "db_username" {
+  description = "Master username for the RDS instance"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "db_publicly_accessible" {
+  description = "Whether the RDS instance should be publicly accessible"
+  type        = bool
+  default     = false
+}
+
+variable "db_skip_final_snapshot" {
+  description = "Skip final snapshot on RDS deletion"
+  type        = bool
+  default     = true
+}
+
+variable "db_multi_az" {
+  description = "Multi-AZ deployment (set to false for single AZ)"
+  type        = bool
+  default     = false
+}
+
+variable "db_name" {
+  description = "Database name inside RDS"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "environment" {
+  description = "environment for running"
+  type        = string
+  default     = "production"
+}
+
+# S3 Bucket Configuration
+variable "s3_bucket_prefix" {
+  description = "Prefix for S3 bucket name"
+  type        = string
+  default     = "profile-pic-bucket"
+}
+
+variable "s3_bucket_name" {
+  description = "Name tag for S3 bucket"
+  type        = string
+  default     = "profile-pic-bucket"
+}
+
+variable "s3_force_destroy" {
+  description = "Allow Terraform to delete bucket even if it contains objects"
+  type        = bool
+  default     = true
+}
+
+# S3 Public Access Block
+variable "s3_block_public_acls" {
+  description = "Block public ACLs for S3 bucket"
+  type        = bool
+  default     = true
+}
+
+variable "s3_block_public_policy" {
+  description = "Block public policy for S3 bucket"
+  type        = bool
+  default     = true
+}
+
+variable "s3_ignore_public_acls" {
+  description = "Ignore public ACLs for S3 bucket"
+  type        = bool
+  default     = true
+}
+
+variable "s3_restrict_public_buckets" {
+  description = "Restrict public bucket access"
+  type        = bool
+  default     = true
+}
+
+# S3 Encryption
+variable "s3_encryption_algorithm" {
+  description = "Encryption algorithm for S3 bucket"
+  type        = string
+  default     = "AES256"
+}
+
+# S3 Lifecycle Policies
+variable "s3_lifecycle_rule_id" {
+  description = "ID for the lifecycle rule"
+  type        = string
+  default     = "transition-to-standard-ia"
+}
+
+variable "s3_lifecycle_status" {
+  description = "Enable or disable lifecycle rule"
+  type        = string
+  default     = "Enabled"
+}
+
+variable "s3_transition_days" {
+  description = "Number of days before transitioning to STANDARD_IA storage class"
+  type        = number
+  default     = 30
+}
+
+variable "s3_transition_storage_class" {
+  description = "Storage class for transitioned objects"
+  type        = string
+  default     = "STANDARD_IA"
+}
+
+variable "s3_expiration_days" {
+  description = "Number of days before expiring objects"
+  type        = number
+  default     = 365
+}
+
+# IAM Role for S3
+variable "s3_iam_role_name" {
+  description = "IAM Role name for accessing S3 bucket"
+  type        = string
+  default     = "s3-access-role"
+}
+
+# S3 Bucket Policies
+variable "s3_allowed_actions" {
+  description = "Allowed S3 actions for IAM role"
+  type        = list(string)
+  default     = ["s3:*"]
+}
+
+variable "s3_denied_actions" {
+  description = "Denied S3 actions for unauthorized access"
+  type        = list(string)
+  default     = ["s3:*"]
+}

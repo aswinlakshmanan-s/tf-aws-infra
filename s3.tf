@@ -3,14 +3,14 @@ resource "random_uuid" "bucket_name" {}
 
 # Create the S3 bucket with a unique UUID name
 resource "aws_s3_bucket" "profile_pic_bucket" {
-  bucket = "profile-pic-bucket-${lower(random_uuid.bucket_name.result)}"
+  bucket = "${var.s3_bucket_prefix}-${lower(random_uuid.bucket_name.result)}"
 
   # Enable force destroy to delete the bucket even if it has objects
-  force_destroy = true
+  force_destroy = var.s3_force_destroy
 
   tags = {
-    Name        = "profile-pic-bucket"
-    Environment = "Production"
+    Name        = var.s3_bucket_name
+    Environment = var.environment
   }
 }
 
@@ -18,10 +18,10 @@ resource "aws_s3_bucket" "profile_pic_bucket" {
 resource "aws_s3_bucket_public_access_block" "block_public_access" {
   bucket = aws_s3_bucket.profile_pic_bucket.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = var.s3_block_public_acls
+  block_public_policy     = var.s3_block_public_policy
+  ignore_public_acls      = var.s3_ignore_public_acls
+  restrict_public_buckets = var.s3_restrict_public_buckets
 }
 
 # Enable server-side encryption for the S3 bucket
@@ -30,7 +30,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "sse" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm = var.s3_encryption_algorithm
     }
   }
 }
@@ -40,23 +40,23 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
   bucket = aws_s3_bucket.profile_pic_bucket.id
 
   rule {
-    id     = "transition-to-standard-ia"
-    status = "Enabled"
+    id     = var.s3_lifecycle_rule_id
+    status = var.s3_lifecycle_status
 
     transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
+      days          = var.s3_transition_days
+      storage_class = var.s3_transition_storage_class
     }
 
     expiration {
-      days = 365 # Optional: Delete objects after 1 year (adjust as needed)
+      days = var.s3_expiration_days
     }
   }
 }
 
 # IAM Role for accessing S3 bucket
 resource "aws_iam_role" "s3_access_role" {
-  name = "s3-access-role"
+  name = var.s3_iam_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -84,7 +84,7 @@ resource "aws_s3_bucket_policy" "private_access_policy" {
         Principal = {
           AWS = aws_iam_role.s3_access_role.arn
         }
-        Action = "s3:*"
+        Action = var.s3_allowed_actions
         Resource = [
           aws_s3_bucket.profile_pic_bucket.arn,
           "${aws_s3_bucket.profile_pic_bucket.arn}/*"
@@ -93,7 +93,7 @@ resource "aws_s3_bucket_policy" "private_access_policy" {
       {
         Effect    = "Deny"
         Principal = "*"
-        Action    = "s3:*"
+        Action    = var.s3_denied_actions
         Resource = [
           aws_s3_bucket.profile_pic_bucket.arn,
           "${aws_s3_bucket.profile_pic_bucket.arn}/*"
