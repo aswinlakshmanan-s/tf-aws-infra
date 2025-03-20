@@ -373,3 +373,15 @@ variable "s3_denied_actions" {
   type        = list(string)
   default     = ["s3:*"]
 }
+
+variable "database_name" {
+  description = "database name"
+  type        = string
+  default     = "postgres"
+}
+
+variable "database_user" {
+  description = "database user"
+  type        = string
+  default     = "csye6225"
+}

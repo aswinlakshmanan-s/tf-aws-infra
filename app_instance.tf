@@ -22,8 +22,8 @@ resource "aws_instance" "web_app" {
     mkdir -p /opt/csye6225/webapp
     echo "DB_HOST=${local.rds_host}" >> /opt/csye6225/webapp/.env
     echo "DB_PORT=${aws_db_instance.csye6225_rds.port}" >> /opt/csye6225/webapp/.env
-    echo "DB_NAME=postgres" >> /opt/csye6225/webapp/.env
-    echo "DB_USER=csye6225" >> /opt/csye6225/webapp/.env
+    echo "DB_NAME=${var.database_name}" >> /opt/csye6225/webapp/.env
+    echo "DB_USER=${var.database_user}" >> /opt/csye6225/webapp/.env
     echo "DB_PASSWORD=${random_password.db_password.result}" >> /opt/csye6225/webapp/.env
     echo "AWS_BUCKET_NAME=${aws_s3_bucket.profile_pic_bucket.bucket}" >> /opt/csye6225/webapp/.env
     echo "AWS_REGION=${var.aws_region}" >> /opt/csye6225/webapp/.env
