@@ -18,19 +18,25 @@ resource "aws_instance" "web_app" {
   }
 
   user_data = <<-EOF
-    #!/bin/bash
-    mkdir -p /opt/csye6225/webapp
-    echo "DB_HOST=${local.rds_host}" >> /opt/csye6225/webapp/.env
-    echo "DB_PORT=${aws_db_instance.csye6225_rds.port}" >> /opt/csye6225/webapp/.env
-    echo "DB_NAME=${var.database_name}" >> /opt/csye6225/webapp/.env
-    echo "DB_USER=${var.database_user}" >> /opt/csye6225/webapp/.env
-    echo "DB_PASSWORD=${random_password.db_password.result}" >> /opt/csye6225/webapp/.env
-    echo "AWS_BUCKET_NAME=${aws_s3_bucket.profile_pic_bucket.bucket}" >> /opt/csye6225/webapp/.env
-    echo "AWS_REGION=${var.aws_region}" >> /opt/csye6225/webapp/.env
-    echo "PORT=${var.app_port}" >> /opt/csye6225/webapp/.env
-    chown csye6225:csye6225 /opt/csye6225/webapp/.env
-    chmod 600 /opt/csye6225/webapp/.env
-  EOF
+  #!/bin/bash
+  mkdir -p /opt/csye6225/webapp
+  echo "DB_HOST=${local.rds_host}" >> /opt/csye6225/webapp/.env
+  echo "DB_PORT=${aws_db_instance.csye6225_rds.port}" >> /opt/csye6225/webapp/.env
+  echo "DB_NAME=${var.database_name}" >> /opt/csye6225/webapp/.env
+  echo "DB_USER=${var.database_user}" >> /opt/csye6225/webapp/.env
+  echo "DB_PASSWORD=${random_password.db_password.result}" >> /opt/csye6225/webapp/.env
+  echo "AWS_BUCKET_NAME=${aws_s3_bucket.profile_pic_bucket.bucket}" >> /opt/csye6225/webapp/.env
+  echo "AWS_REGION=${var.aws_region}" >> /opt/csye6225/webapp/.env
+  echo "PORT=${var.app_port}" >> /opt/csye6225/webapp/.env
+  echo "NODE_ENV=production" >> /opt/csye6225/webapp/.env
+  chown csye6225:csye6225 /opt/csye6225/webapp/.env
+  chmod 600 /opt/csye6225/webapp/.env
+
+  cp /home/ubuntu/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+  /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+  sudo systemctl restart csye6225.service
+EOF
+
 
   tags = {
     Name = var.instance_name
