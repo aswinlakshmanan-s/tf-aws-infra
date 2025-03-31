@@ -1,6 +1,11 @@
-output "instance_public_ip" {
-  description = "Public IP of the launched web application instance"
-  value       = aws_instance.web_app.public_ip
+output "load_balancer_dns" {
+  description = "DNS name of the Application Load Balancer"
+  value       = aws_lb.app_lb.dns_name
+}
+
+output "asg_name" {
+  description = "Name of the Auto Scaling Group"
+  value       = aws_autoscaling_group.webapp_asg.name
 }
 
 output "s3_bucket_name" {

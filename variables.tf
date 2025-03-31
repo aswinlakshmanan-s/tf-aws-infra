@@ -385,3 +385,16 @@ variable "database_user" {
   type        = string
   default     = "csye6225"
 }
+
+
+# New variables for DNS and key pair
+variable "domain_name" {
+  description = "Root domain name for DNS records (e.g. aswinlakshmanan.me)"
+  type        = string
+  default     = "aswinlakshmanan.me"
+}
+
+variable "key_name" {
+  description = "Name of the EC2 key pair"
+  type        = string
+}
