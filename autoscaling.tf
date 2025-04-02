@@ -5,7 +5,7 @@ resource "aws_autoscaling_group" "webapp_asg" {
   desired_capacity          = 3
   vpc_zone_identifier       = aws_subnet.public_subnets[*].id
   target_group_arns         = [aws_lb_target_group.app_tg.arn]
-  health_check_type         = "EC2"
+  health_check_type         = "ELB"
   health_check_grace_period = 60
   default_cooldown          = 60
 
@@ -38,13 +38,13 @@ resource "aws_autoscaling_policy" "scale_up" {
 resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   alarm_name          = "cpu_high_alarm"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 2
+  evaluation_periods  = 1
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
-  period              = 120
+  period              = 60
   statistic           = "Average"
-  threshold           = 5
-  alarm_description   = "Scale up if CPU utilization > 5%"
+  threshold           = 8
+  alarm_description   = "Scale up if CPU utilization > 8%"
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.webapp_asg.name
   }
@@ -62,13 +62,13 @@ resource "aws_autoscaling_policy" "scale_down" {
 resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   alarm_name          = "cpu_low_alarm"
   comparison_operator = "LessThanThreshold"
-  evaluation_periods  = 2
+  evaluation_periods  = 1
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
-  period              = 120
+  period              = 60
   statistic           = "Average"
-  threshold           = 3
-  alarm_description   = "Scale down if CPU utilization < 3%"
+  threshold           = 6
+  alarm_description   = "Scale down if CPU utilization < 6%"
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.webapp_asg.name
   }
