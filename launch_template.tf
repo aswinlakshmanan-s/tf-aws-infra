@@ -1,9 +1,10 @@
 locals {
+  # Extract the RDS host from the DB instance endpoint.
   rds_host = split(":", aws_db_instance.csye6225_rds.endpoint)[0]
 }
 
 resource "aws_launch_template" "webapp_lt" {
-  name_prefix   = "csye6225_asg"
+  name_prefix   = var.launch_template_prefix
   image_id      = var.custom_ami
   instance_type = var.instance_type
   key_name      = var.key_name
@@ -16,7 +17,7 @@ resource "aws_launch_template" "webapp_lt" {
   }
 
   block_device_mappings {
-    device_name = "/dev/sda1"
+    device_name = var.device_name
     ebs {
       volume_size           = var.root_volume_size
       volume_type           = var.root_volume_type
@@ -35,7 +36,7 @@ resource "aws_launch_template" "webapp_lt" {
     echo "AWS_BUCKET_NAME=${aws_s3_bucket.profile_pic_bucket.bucket}" >> /opt/csye6225/webapp/.env
     echo "AWS_REGION=${var.aws_region}" >> /opt/csye6225/webapp/.env
     echo "PORT=${var.app_port}" >> /opt/csye6225/webapp/.env
-    echo "NODE_ENV=production" >> /opt/csye6225/webapp/.env
+    echo "NODE_ENV=${var.environment}" >> /opt/csye6225/webapp/.env
     chown csye6225:csye6225 /opt/csye6225/webapp/.env
     chmod 600 /opt/csye6225/webapp/.env
 

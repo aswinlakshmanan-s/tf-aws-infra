@@ -1,5 +1,6 @@
 locals {
-  zone_name = var.environment == "dev" ? "dev.aswinlakshmanan.me" : "demo.aswinlakshmanan.me"
+  # Choose the correct zone name based on the environment
+  zone_name = var.environment == "dev" ? var.route53_zone_name_dev : var.route53_zone_name_demo
 }
 
 data "aws_route53_zone" "primary" {
@@ -9,9 +10,8 @@ data "aws_route53_zone" "primary" {
 
 resource "aws_route53_record" "app_alias" {
   zone_id = data.aws_route53_zone.primary.zone_id
-  # Leave name empty to create an apex alias record (i.e. dev.aswinlakshmanan.me or demo.aswinlakshmanan.me)
-  name = ""
-  type = "A"
+  name    = var.route53_record_name  # Empty string creates an apex alias record
+  type    = var.route53_record_type
 
   alias {
     name                   = aws_lb.app_lb.dns_name

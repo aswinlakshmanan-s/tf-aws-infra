@@ -1,13 +1,13 @@
 resource "aws_autoscaling_group" "webapp_asg" {
-  name                      = "csye6225_asg"
-  max_size                  = 5
-  min_size                  = 3
-  desired_capacity          = 3
+  name                      = var.asg_name
+  max_size                  = var.asg_max_size
+  min_size                  = var.asg_min_size
+  desired_capacity          = var.asg_desired_capacity
   vpc_zone_identifier       = aws_subnet.public_subnets[*].id
   target_group_arns         = [aws_lb_target_group.app_tg.arn]
-  health_check_type         = "ELB"
-  health_check_grace_period = 60
-  default_cooldown          = 60
+  health_check_type         = var.health_check_type
+  health_check_grace_period = var.health_check_grace_period
+  default_cooldown          = var.default_cooldown
 
   launch_template {
     id      = aws_launch_template.webapp_lt.id
@@ -22,29 +22,29 @@ resource "aws_autoscaling_group" "webapp_asg" {
 
   tag {
     key                 = "AutoScalingGroup"
-    value               = "csye6225_asg"
+    value               = var.asg_tag_value
     propagate_at_launch = true
   }
 }
 
 resource "aws_autoscaling_policy" "scale_up" {
-  name                   = "scale-up-policy"
+  name                   = var.scale_up_policy_name
   autoscaling_group_name = aws_autoscaling_group.webapp_asg.name
-  scaling_adjustment     = 1
-  cooldown               = 60
-  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = var.scale_up_adjustment
+  cooldown               = var.scale_up_cooldown
+  adjustment_type        = var.scale_up_adjustment_type
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu_high" {
-  alarm_name          = "cpu_high_alarm"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = 60
-  statistic           = "Average"
-  threshold           = 8
-  alarm_description   = "Scale up if CPU utilization > 8%"
+  alarm_name          = var.cpu_high_alarm_name
+  comparison_operator = var.cpu_high_comparison_operator
+  evaluation_periods  = var.cpu_high_evaluation_periods
+  metric_name         = var.cpu_high_metric_name
+  namespace           = var.cpu_high_namespace
+  period              = var.cpu_high_period
+  statistic           = var.cpu_high_statistic
+  threshold           = var.cpu_high_threshold
+  alarm_description   = var.cpu_high_alarm_description
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.webapp_asg.name
   }
@@ -52,23 +52,23 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
 }
 
 resource "aws_autoscaling_policy" "scale_down" {
-  name                   = "scale-down-policy"
+  name                   = var.scale_down_policy_name
   autoscaling_group_name = aws_autoscaling_group.webapp_asg.name
-  scaling_adjustment     = -1
-  cooldown               = 60
-  adjustment_type        = "ChangeInCapacity"
+  scaling_adjustment     = var.scale_down_adjustment
+  cooldown               = var.scale_down_cooldown
+  adjustment_type        = var.scale_down_adjustment_type
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu_low" {
-  alarm_name          = "cpu_low_alarm"
-  comparison_operator = "LessThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = 60
-  statistic           = "Average"
-  threshold           = 6
-  alarm_description   = "Scale down if CPU utilization < 6%"
+  alarm_name          = var.cpu_low_alarm_name
+  comparison_operator = var.cpu_low_comparison_operator
+  evaluation_periods  = var.cpu_low_evaluation_periods
+  metric_name         = var.cpu_low_metric_name
+  namespace           = var.cpu_low_namespace
+  period              = var.cpu_low_period
+  statistic           = var.cpu_low_statistic
+  threshold           = var.cpu_low_threshold
+  alarm_description   = var.cpu_low_alarm_description
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.webapp_asg.name
   }

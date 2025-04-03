@@ -7,26 +7,26 @@ resource "aws_lb" "app_lb" {
 }
 
 resource "aws_lb_target_group" "app_tg" {
-  name     = "app-tg"
+  name     = var.tg_name
   port     = var.app_port
-  protocol = "HTTP"
+  protocol = var.tg_protocol
   vpc_id   = aws_vpc.main_vpc.id
 
   health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 5
-    interval            = 30
-    matcher             = "200"
-    path                = "/healthz"
-    protocol            = "HTTP"
+    healthy_threshold   = var.hc_healthy_threshold
+    unhealthy_threshold = var.hc_unhealthy_threshold
+    timeout             = var.hc_timeout
+    interval            = var.hc_interval
+    matcher             = var.hc_matcher
+    path                = var.hc_path
+    protocol            = var.hc_protocol
   }
 }
 
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.app_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = var.listener_port
+  protocol          = var.listener_protocol
 
   default_action {
     type             = "forward"
