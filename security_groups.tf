@@ -1,43 +1,70 @@
-# Application Security Group for the web application
-resource "aws_security_group" "app_sg" {
-  name        = var.app_sg_name
-  description = var.app_sg_description
+// Load Balancer Security Group – allows HTTP/HTTPS from anywhere
+resource "aws_security_group" "lb_sg" {
+  name        = "lb-security-group"
+  description = "Security group for the load balancer to access the web application"
   vpc_id      = aws_vpc.main_vpc.id
 
-  # Allow SSH access from a specific IP range (e.g., your office IP or bastion host)
   ingress {
-    description = "Allow SSH (admin use only)"
-    from_port   = var.ssh_port
-    to_port     = var.ssh_port
+    description = "Allow HTTP traffic"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = var.admin_cidr_blocks # Restrict to specific IPs
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow HTTPS traffic from the internet
   ingress {
-    description = "Allow HTTPS"
-    from_port   = var.https_port
-    to_port     = var.https_port
+    description = "Allow HTTPS traffic"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow traffic on the application port (e.g., 8000)
-  ingress {
-    description = "Allow Web Application Port"
-    from_port   = var.app_port
-    to_port     = var.app_port
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr
-  }
-
-  # Allow all outbound traffic
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.allowed_cidr
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lb-sg"
+  }
+}
+
+// Updated Application Security Group for the web application instances
+resource "aws_security_group" "app_sg" {
+  name        = var.app_sg_name
+  description = var.app_sg_description
+  vpc_id      = aws_vpc.main_vpc.id
+
+  // Allow SSH only from the Load Balancer security group
+  ingress {
+    description     = "Allow SSH from load balancer security group"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lb_sg.id]
+  }
+
+  // Allow application traffic (e.g. HTTP on app_port) only from the Load Balancer security group
+  ingress {
+    description     = "Allow application traffic from load balancer security group"
+    from_port       = var.app_port
+    to_port         = var.app_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lb_sg.id]
+  }
+
+  // (Optional) Remove previous rules that allowed public access
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -47,28 +74,25 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-# Database Security Group
 resource "aws_security_group" "db_sg" {
   name        = "db-sg"
   description = "Security group for RDS instances"
   vpc_id      = aws_vpc.main_vpc.id
 
-  # Allow inbound traffic on the database port (e.g., 5432 for PostgreSQL or 3306 for MySQL/MariaDB)
   ingress {
     description     = "Allow database traffic from the application security group"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.app_sg.id] # Allow traffic only from the application security group
+    security_groups = [aws_security_group.app_sg.id]
   }
 
-  # Allow all outbound traffic (optional, adjust as needed)
   egress {
-    description = "Allow all outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description     = "Allow all outbound traffic"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.app_sg.id]
   }
 
   tags = {

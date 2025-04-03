@@ -115,62 +115,62 @@ variable "instance_name" {
 variable "security_group_id" {
   description = "Security group ID for the EC2 instance"
   type        = string
-  default     = "" # Will be dynamically assigned
+  default     = ""
 }
 
 variable "db_security_group_id" {
   description = "Security group ID for the RDS instance"
   type        = string
-  default     = "" # Will be dynamically assigned
+  default     = ""
 }
 
 variable "database_password" {
   description = "Password for the PostgreSQL database"
   type        = string
   sensitive   = true
-  default     = "" # Will be dynamically generated
+  default     = ""
 }
 
 variable "s3_bucket_id" {
   description = "S3 bucket ID for storing profile pictures"
   type        = string
-  default     = "" # Will be dynamically generated
+  default     = ""
 }
 
 variable "rds_endpoint" {
   description = "Endpoint for the RDS instance"
   type        = string
-  default     = "" # Will be dynamically assigned
+  default     = ""
 }
 
 variable "public_subnets" {
   description = "List of public subnet IDs"
   type        = list(string)
-  default     = [] # Will be dynamically assigned
+  default     = []
 }
 
 variable "private_subnets" {
   description = "List of private subnet IDs"
   type        = list(string)
-  default     = [] # Will be dynamically assigned
+  default     = []
 }
 
 variable "load_balancer_sg_id" {
   description = "Security group ID for the load balancer"
   type        = string
-  default     = "" # Will be dynamically assigned
+  default     = ""
 }
 
 variable "vpc_id" {
   description = "VPC ID to create subnets in"
   type        = string
-  default     = "" # Will be dynamically assigned
+  default     = ""
 }
 
 variable "admin_cidr_blocks" {
   description = "CIDR blocks allowed for SSH access"
   type        = list(string)
-  default     = ["0.0.0.0/0"] # Replace with your office IP or bastion host IP
+  default     = ["0.0.0.0/0"]
 }
 
 # Database Parameter Group
@@ -183,7 +183,7 @@ variable "db_parameter_group_name" {
 variable "db_family" {
   description = "Database engine family (PostgreSQL, MySQL, or MariaDB)"
   type        = string
-  default     = "postgres12"
+  default     = "postgres16"
 }
 
 variable "db_parameter_group_description" {
@@ -221,7 +221,7 @@ variable "db_engine" {
 variable "db_engine_version" {
   description = "Database engine version"
   type        = string
-  default     = "12"
+  default     = "16"
 }
 
 variable "db_instance_class" {
@@ -385,3 +385,349 @@ variable "database_user" {
   type        = string
   default     = "csye6225"
 }
+
+
+# New variables for DNS and key pair
+variable "domain_name" {
+  description = "Root domain name for DNS records (e.g. aswinlakshmanan.me)"
+  type        = string
+  default     = "aswinlakshmanan.me"
+}
+
+variable "key_name" {
+  description = "Name of the EC2 key pair"
+  type        = string
+  default     = "my-app-key"
+}
+
+variable "asg_name" {
+  description = "Name of the Auto Scaling Group"
+  type        = string
+  default     = "csye6225_asg"
+}
+
+variable "asg_max_size" {
+  description = "Maximum number of instances in the Auto Scaling Group"
+  type        = number
+  default     = 5
+}
+
+variable "asg_min_size" {
+  description = "Minimum number of instances in the Auto Scaling Group"
+  type        = number
+  default     = 3
+}
+
+variable "asg_desired_capacity" {
+  description = "Desired capacity of the Auto Scaling Group"
+  type        = number
+  default     = 3
+}
+
+variable "health_check_type" {
+  description = "The type of health check to use (ELB or EC2)"
+  type        = string
+  default     = "ELB"
+}
+
+variable "health_check_grace_period" {
+  description = "Health check grace period in seconds"
+  type        = number
+  default     = 60
+}
+
+variable "default_cooldown" {
+  description = "Default cooldown period (in seconds) for the ASG"
+  type        = number
+  default     = 60
+}
+
+variable "asg_tag_value" {
+  description = "Tag value for the AutoScalingGroup tag"
+  type        = string
+  default     = "csye6225_asg"
+}
+
+variable "scale_up_policy_name" {
+  description = "Name of the scale-up policy"
+  type        = string
+  default     = "scale-up-policy"
+}
+
+variable "scale_up_adjustment" {
+  description = "Scaling adjustment for scale-up"
+  type        = number
+  default     = 1
+}
+
+variable "scale_up_cooldown" {
+  description = "Cooldown for the scale-up policy in seconds"
+  type        = number
+  default     = 60
+}
+
+variable "scale_up_adjustment_type" {
+  description = "Adjustment type for scale-up (ChangeInCapacity)"
+  type        = string
+  default     = "ChangeInCapacity"
+}
+
+variable "cpu_high_alarm_name" {
+  description = "CloudWatch alarm name for high CPU utilization"
+  type        = string
+  default     = "cpu_high_alarm"
+}
+
+variable "cpu_high_comparison_operator" {
+  description = "Comparison operator for high CPU alarm"
+  type        = string
+  default     = "GreaterThanThreshold"
+}
+
+variable "cpu_high_evaluation_periods" {
+  description = "Evaluation periods for the high CPU alarm"
+  type        = number
+  default     = 1
+}
+
+variable "cpu_high_metric_name" {
+  description = "Metric name for the high CPU alarm"
+  type        = string
+  default     = "CPUUtilization"
+}
+
+variable "cpu_high_namespace" {
+  description = "Metric namespace for the high CPU alarm"
+  type        = string
+  default     = "AWS/EC2"
+}
+
+variable "cpu_high_period" {
+  description = "Period (in seconds) for the high CPU alarm"
+  type        = number
+  default     = 60
+}
+
+variable "cpu_high_statistic" {
+  description = "Statistic for the high CPU alarm"
+  type        = string
+  default     = "Average"
+}
+
+variable "cpu_high_threshold" {
+  description = "CPU threshold for scaling up"
+  type        = number
+  default     = 8
+}
+
+variable "cpu_high_alarm_description" {
+  description = "Description for the high CPU alarm"
+  type        = string
+  default     = "Scale up if CPU utilization > 8%"
+}
+
+variable "scale_down_policy_name" {
+  description = "Name of the scale-down policy"
+  type        = string
+  default     = "scale-down-policy"
+}
+
+variable "scale_down_adjustment" {
+  description = "Scaling adjustment for scale-down"
+  type        = number
+  default     = -1
+}
+
+variable "scale_down_cooldown" {
+  description = "Cooldown for the scale-down policy in seconds"
+  type        = number
+  default     = 60
+}
+
+variable "scale_down_adjustment_type" {
+  description = "Adjustment type for scale-down (ChangeInCapacity)"
+  type        = string
+  default     = "ChangeInCapacity"
+}
+
+variable "cpu_low_alarm_name" {
+  description = "CloudWatch alarm name for low CPU utilization"
+  type        = string
+  default     = "cpu_low_alarm"
+}
+
+variable "cpu_low_comparison_operator" {
+  description = "Comparison operator for low CPU alarm"
+  type        = string
+  default     = "LessThanThreshold"
+}
+
+variable "cpu_low_evaluation_periods" {
+  description = "Evaluation periods for the low CPU alarm"
+  type        = number
+  default     = 1
+}
+
+variable "cpu_low_metric_name" {
+  description = "Metric name for the low CPU alarm"
+  type        = string
+  default     = "CPUUtilization"
+}
+
+variable "cpu_low_namespace" {
+  description = "Metric namespace for the low CPU alarm"
+  type        = string
+  default     = "AWS/EC2"
+}
+
+variable "cpu_low_period" {
+  description = "Period (in seconds) for the low CPU alarm"
+  type        = number
+  default     = 60
+}
+
+variable "cpu_low_statistic" {
+  description = "Statistic for the low CPU alarm"
+  type        = string
+  default     = "Average"
+}
+
+variable "cpu_low_threshold" {
+  description = "CPU threshold for scaling down"
+  type        = number
+  default     = 6
+}
+
+variable "cpu_low_alarm_description" {
+  description = "Description for the low CPU alarm"
+  type        = string
+  default     = "Scale down if CPU utilization < 6%"
+}
+
+variable "device_name" {
+  description = "Device name for the root volume"
+  type        = string
+  default     = "/dev/sda1"
+}
+
+variable "launch_template_prefix" {
+  description = "Prefix for the launch template name"
+  type        = string
+  default     = "csye6225_asg"
+}
+
+variable "lb_name" {
+  description = "Name of the Application Load Balancer"
+  type        = string
+  default     = "app-lb"
+}
+
+variable "lb_internal" {
+  description = "Whether the load balancer is internal (true) or public (false)"
+  type        = bool
+  default     = false
+}
+
+variable "lb_type" {
+  description = "Type of the load balancer (e.g., application, network)"
+  type        = string
+  default     = "application"
+}
+
+variable "tg_name" {
+  description = "Name of the target group"
+  type        = string
+  default     = "app-tg"
+}
+
+variable "tg_port" {
+  description = "Port on which the target group forwards traffic"
+  type        = number
+  default     = 8080
+}
+
+variable "tg_protocol" {
+  description = "Protocol for the target group (HTTP/HTTPS)"
+  type        = string
+  default     = "HTTP"
+}
+
+variable "hc_healthy_threshold" {
+  description = "Number of consecutive successful health checks before considering a target healthy"
+  type        = number
+  default     = 2
+}
+
+variable "hc_unhealthy_threshold" {
+  description = "Number of consecutive failed health checks before considering a target unhealthy"
+  type        = number
+  default     = 2
+}
+
+variable "hc_timeout" {
+  description = "Timeout (in seconds) for each health check"
+  type        = number
+  default     = 5
+}
+
+variable "hc_interval" {
+  description = "Interval (in seconds) between health checks"
+  type        = number
+  default     = 30
+}
+
+variable "hc_matcher" {
+  description = "The expected HTTP response code from the health check"
+  type        = string
+  default     = "200"
+}
+
+variable "hc_path" {
+  description = "The path for the health check endpoint"
+  type        = string
+  default     = "/healthz"
+}
+
+variable "hc_protocol" {
+  description = "Protocol used for the health check (HTTP/HTTPS)"
+  type        = string
+  default     = "HTTP"
+}
+
+variable "listener_port" {
+  description = "Port on which the ALB listens"
+  type        = number
+  default     = 80
+}
+
+variable "listener_protocol" {
+  description = "Protocol used by the ALB listener"
+  type        = string
+  default     = "HTTP"
+}
+
+
+variable "route53_zone_name_dev" {
+  description = "The hosted zone name for the dev environment"
+  type        = string
+  default     = "dev.aswinlakshmanan.me"
+}
+
+variable "route53_zone_name_demo" {
+  description = "The hosted zone name for the demo environment"
+  type        = string
+  default     = "demo.aswinlakshmanan.me"
+}
+
+variable "route53_record_type" {
+  description = "DNS record type"
+  type        = string
+  default     = "A"
+}
+
+variable "route53_record_name" {
+  description = "DNS record name. Leave empty for apex records"
+  type        = string
+  default     = ""
+}
+
