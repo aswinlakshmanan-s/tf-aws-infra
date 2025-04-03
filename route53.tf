@@ -10,7 +10,7 @@ data "aws_route53_zone" "primary" {
 
 resource "aws_route53_record" "app_alias" {
   zone_id = data.aws_route53_zone.primary.zone_id
-  name    = var.route53_record_name  # Empty string creates an apex alias record
+  name    = var.route53_record_name # Empty string creates an apex alias record
   type    = var.route53_record_type
 
   alias {
