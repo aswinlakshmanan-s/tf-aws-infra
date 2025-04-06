@@ -731,3 +731,9 @@ variable "route53_record_name" {
   default     = ""
 }
 
+variable "launch_template_name" {
+  description = "The fixed name for the EC2 launch template"
+  type        = string
+  default     = "csye6225-webapp-lt"
+}
+

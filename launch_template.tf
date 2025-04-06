@@ -4,7 +4,7 @@ locals {
 }
 
 resource "aws_launch_template" "webapp_lt" {
-  name_prefix   = var.launch_template_prefix
+  name          = var.launch_template_name
   image_id      = var.custom_ami
   instance_type = var.instance_type
   key_name      = var.key_name
