@@ -23,13 +23,29 @@ resource "aws_lb_target_group" "app_tg" {
   }
 }
 
-resource "aws_lb_listener" "http_listener" {
+# resource "aws_lb_listener" "http_listener" {
+#   load_balancer_arn = aws_lb.app_lb.arn
+#   port              = var.listener_port
+#   protocol          = var.listener_protocol
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.app_tg.arn
+#   }
+# }
+
+resource "aws_lb_listener" "https_listener" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = var.listener_port
   protocol          = var.listener_protocol
-
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.certificate_acm_arn
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
+  }
+
+  tags = {
+    Environment = "demo"
   }
 }

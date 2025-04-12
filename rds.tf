@@ -41,6 +41,8 @@ resource "aws_db_instance" "csye6225_rds" {
   identifier             = var.db_identifier
   username               = var.db_username
   password               = random_password.db_password.result
+  storage_encrypted      = true
+  kms_key_id             = aws_kms_key.rds_key.arn
   parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
   db_subnet_group_name   = aws_db_subnet_group.private_subnets.name
   vpc_security_group_ids = [aws_security_group.db_sg.id]
