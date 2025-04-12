@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region to deploy resources"
   type        = string
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
 variable "vpc_name" {
@@ -697,13 +697,13 @@ variable "hc_protocol" {
 variable "listener_port" {
   description = "Port on which the ALB listens"
   type        = number
-  default     = 80
+  default     = 443
 }
 
 variable "listener_protocol" {
   description = "Protocol used by the ALB listener"
   type        = string
-  default     = "HTTP"
+  default     = "HTTPS"
 }
 
 
@@ -737,3 +737,28 @@ variable "launch_template_name" {
   default     = "csye6225-webapp-lt"
 }
 
+variable "certificate_acm_arn" {
+  description = "ACM for Demo Env"
+  type        = string
+  default     = "arn:aws:acm:us-east-1:474668419602:certificate/df5bab86-4e42-4c1d-b947-6411855ed44d"
+}
+
+
+variable "rotation_period" {
+  description = "KMS Rotation Period in days"
+  type        = number
+  default     = 90
+}
+
+variable "deletion_window" {
+  description = "KMS key deletion window in days"
+  type        = number
+  default     = 7
+}
+
+variable "key_rotation_status" {
+  description = "KMS key rotation"
+  type        = bool
+  default     = true
+
+}
